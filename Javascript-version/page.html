@@ -9,7 +9,7 @@
 
 		<!-- Latest compiled and minified Bootstrap CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-		
+
 		<!-- Personalised CSS -->
 		<link rel="stylesheet" href="style.css" />
 
@@ -41,9 +41,9 @@
 				<!-- Input form -->
 				<form class="form-inline">
 					<div class="form-group form-group-lg">
-						<input type="text" placeholder="Choose a number" class="form-control form-control-lg">
+						<input id="input-n" type="text" placeholder="Choose a number" class="form-control form-control-lg">
 					</div>
-					<button type="button" class="btn btn-lg btn-success" onClick="start()">Start computing &raquo;</button>
+					<button type="button" class="btn btn-lg btn-success" onClick="start();startTests();">Start computing &raquo;</button>
 				</form>
 				<!-- Warning message -->
 				<p>
@@ -67,16 +67,17 @@
 			</div>
 
 			<!-- Test results -->
-			<div id="test-results">
+			<div id="test-results" class="hidden">
 				<div class="panel panel-info">
 					<div class="panel-heading">
 						<h3 class="panel-title">Tests results</h3>
 					</div>
 					<div id="global-result" class="panel-body">
-						
 					</div>
 				</div>
-				
+
+				<div id="test-results-details"></div>
+
 			</div>
 
 			<!-- Multiplication tables -->
@@ -206,7 +207,7 @@
 					<a class="btn btn-default btn-pers navbar-right" href="#" role="button">Next &rsaquo;</a>
 				</div>
 			</nav> -->
-			
+
 		</div> <!-- container -->
 
 		<!-- Application script -->
