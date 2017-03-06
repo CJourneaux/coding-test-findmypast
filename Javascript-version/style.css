@@ -1,0 +1,9 @@
+.btn-pers {
+	margin-top: 6px;
+	width:150px;
+}
+
+#prime-tables * tr * {
+	min-width: 70px;
+	text-align: right;
+}

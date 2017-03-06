@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Multiplication tables of prime numbers</title>
+
+		<!-- Latest compiled and minified Bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		
+		<!-- Personalised CSS -->
+		<link rel="stylesheet" href="style.css" />
+
+		<!-- Scripts are loaded at the end of the page -->
+
+	</head>
+
+	<body>
+
+		<!-- Navigation bar -->
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Cécile Journeaux</a>
+				</div>
+				<div class="navbar-right navbar-btn btn-group" data-toggle="buttons">
+					<label id="toggle-work" class="btn btn-info" onclick="changeToComputing();return false;">Working</label>
+					<label id="toggle-test" class="btn btn-default" onclick="changeToTesting();return false;">Testing</label>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Page header -->
+		<div class="jumbotron">
+			<div class="container">
+				<!-- Title and introduction -->
+				<h1>Prime number multiplication tables</h1>
+				<p class="welcome-message">This webpage will allow you to compute and display the multiplication tables of the first n prime numbers, n being a number of your choice.</p>
+				<!-- Input form -->
+				<form class="form-inline">
+					<div class="form-group form-group-lg">
+						<input type="text" placeholder="Choose a number" class="form-control form-control-lg">
+					</div>
+					<button type="button" class="btn btn-lg btn-success" onClick="start()">Start computing &raquo;</button>
+				</form>
+				<!-- Warning message -->
+				<p>
+					<div id="error-input-msg" class="alert alert-danger hidden" role="alert">
+						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+						<span class="sr-only">Error:</span>
+						This is not a valid positive integer. Please try again!
+					</div>
+				</p>
+			</div>
+		</div>
+
+		<!-- Page content -->
+		<div class="container">
+
+			<!-- Progress bar -->
+			<div id="progress-bar" class="progress hidden">
+				<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45" style="width: 75%">
+					<span class="sr-only">45% Complete</span>
+				</div>
+			</div>
+
+			<!-- Test results -->
+			<div id="test-results">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Tests results</h3>
+					</div>
+					<div id="global-result" class="panel-body">
+						
+					</div>
+				</div>
+				
+			</div>
+
+			<!-- Multiplication tables -->
+			<table id="prime-tables" class="table table-bordered">
+				<thead>
+					<tr class="active">
+						<th></th>
+						<th>2</th>
+						<th>3</th>
+						<th>5</th>
+						<th>7</th>
+						<th>11</th>
+						<th>13</th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th class="active" scope="row">2</th>
+						<td class="info"></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<th class="active" scope="row">3</th>
+						<td></td>
+						<td class="info"></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<th class="active" scope="row">5</th>
+						<td></td>
+						<td></td>
+						<td class="info"></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+				</tr>
+				</tbody>
+			</table>
+
+			<!--
+			<nav class="navbar navbar-inverse navbar-fixed-bottom">
+				<div class="container">
+					<a class="btn btn-default btn-pers" href="#" role="button">&lsaquo; Previous</a>
+					<a class="btn btn-default btn-pers navbar-right" href="#" role="button">Next &rsaquo;</a>
+				</div>
+			</nav> -->
+			
+		</div> <!-- container -->
+
+		<!-- Application script -->
+		<script src="prime_tables.js"></script>
+		<!-- Testing script -->
+		<script src="prime_tables_test.js"></script>
+
+	</body>
+</html>
