@@ -1,16 +1,24 @@
+// a avriable retaining if we are in testing or production mode
 var testingModeActivated = false;
+
 
 function start () {
 	// verify input
 	if ( verifyN() ) {
 		// get input
 		var n = getN();
-		//start computation
 
-		// the set of prime numbers that we found
+		// the set of prime numbers that are looking for
 		var primes = [];
 		// the set of natural numbers
 		var naturals = [];
+		//start computation
+		var nbIteration = 1;
+		do {
+			initNaturals( naturals, 100 * nbIteration  );
+			nbIteration++;
+		} while ( nbIteration < n );
+
 
 	}
 }
@@ -53,6 +61,7 @@ function changeToComputing () {
  *	Functions related to the input
  * ========================================
  */
+/* shows or hide an error message related to the content of the input field */
 function displayErrorMessage ( correctInput ) {
 	var errorMessage = document.getElementById( 'error-input-msg' );
 	if ( correctInput === true ) {
@@ -62,6 +71,7 @@ function displayErrorMessage ( correctInput ) {
 	}
 }
 
+/* gets the content of the input field, or a default value, recording if the field was correctly filled or not */
 function getN () {
 	var n = 1;
 	var nCorrect = false;
@@ -72,6 +82,7 @@ function getN () {
 	return { value: n, continue: nCorrect }
 }
 
+/* checks if the input field is correctly filled or not */
 function verifyN () {
 	var correctInput = false;
 	var potentialN = document.getElementById( 'input-n' ).value;
@@ -88,9 +99,23 @@ function verifyN () {
 	return correctInput;
 }
 
-
-
 /* ========================================
  *	Functions related to the computation
  * ========================================
  */
+/* fills a table with natural numbers greater than 1 associated with a boolean value */
+function initNaturals ( naturalsArray, lengthValue ) {
+	// starting to fill with 1 or the next value needed to complete the array
+	var startIndex = 2;
+	var endIndex = lengthValue + 2;
+	// pushing the indexes further if table is already filled
+	if ( naturalsArray.length ) {
+		// getting the last number of the array
+		startIndex = naturalsArray[ naturalsArray.length - 1 ].number + 1;
+	}
+	for ( i = startIndex; i < endIndex; i++ ) {
+		// adding a new number at the end of the table
+		naturalsArray.push( { number: i, isPrime: true } );
+	}
+	return naturalsArray;
+}

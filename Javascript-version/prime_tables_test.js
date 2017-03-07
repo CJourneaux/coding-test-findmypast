@@ -25,9 +25,9 @@ function globalTest () {
 	results.push( test3() );
 	results.push( test4() );
 	results.push( test5() );
-	//results.push( test6() );
-	//results.push( test7() );
-	//results.push( test8() );
+	results.push( test6() );
+	results.push( test7() );
+	results.push( test8() );
 	//results.push( test9() );
 	//results.push( test10() );
 	//results.push( test11() );
@@ -128,53 +128,85 @@ function test1 () {
 /* n exists */
 function test2 () {
 	if ( typeof getN().value !== 'undefined' ) {
-		return { number: 2, successful: true, message: "n exists" };
+		return { number: 2, successful: true, message: "n exists." };
 	} else {
-		return { number: 2, successful: false, message: "n could not be found" };
+		return { number: 2, successful: false, message: "n could not be found." };
 	}
 }
 
 /* n is not null */
 function test3 () {
 	if ( getN().value ) {
-		return { number: 3, successful: true, message: "n is not null" };
+		return { number: 3, successful: true, message: "n is not null." };
 	} else {
-		return { number: 3, successful: false, message: "n is empty" };
+		return { number: 3, successful: false, message: "n is empty." };
 	}
 }
 
 /* n is a number */
 function test4 () {
 	if ( isNaN( getN().value ) ) {
-		return { number: 4, successful: false, message: "n is not a number" };
+		return { number: 4, successful: false, message: "n is not a number." };
 	} else {
-		return { number: 4, successful: true, message: "n is a number"};
+		return { number: 4, successful: true, message: "n is a number."};
 	}
 }
 
 /* n is an integer */
 function test5 () {
 	if ( getN().value % 1 === 0 ) {
-		return { number: 5, successful: true, message: "n is an integer"};
+		return { number: 5, successful: true, message: "n is an integer."};
 	} else {
-		return { number: 5, successful: false, message: "n is not an integer" };
+		return { number: 5, successful: false, message: "n is not an integer." };
 	}
 }
 
 /* n is greater than 0 */
 function test6 () {
 	if ( getN().value > 0 ) {
-		return { number: 6, result: true, message: "n is strictly positive"};
+		return { number: 6, successful: true, message: "n is strictly positive."};
 	} else {
-		return { number: 6, result: false, message: "n is not strictly positive" };
+		return { number: 6, successful: false, message: "n is not strictly positive." };
 	}
 }
 
+/* the initialisation of the natural numbers array possesses t elements */
 function test7 () {
-
+	/* for the test: t = 45 */
+	var t = 42;
+	var naturalsArray = [];
+	naturalsArray = initNaturals( naturalsArray, t );
+	if ( naturalsArray.length == t ) {
+		return { number: 7, successful: true, message: "A correct amount of natural numbers were generated."};
+	} else {
+		var description = "\nExpected: " + t + " ~ Found: " + naturalsArray.length;
+		return { number: 7, successful: false, message: "An incorrect amount of natural numbers were generated." + description };
+	}
 }
 
+/* the array of natural numbers consists of integers equal to their indexes + 2 */
 function test8 () {
+	// array starts at 2
+	// array contains all following numbers until its end
+	// array is ordered according to its indexes
+	var naturalsArray = [];
+	naturalsArray = initNaturals( naturalsArray, 42 );
+	var testPassed = true;
+	var i = 0;
+	while ( testPassed && i < naturalsArray.length ) {
+		if ( naturalsArray[ i ].number == i + 2 ) {
+			i++;
+		} else {
+			testPassed = false;
+		}
+	}
+	if ( testPassed ) {
+		return { number: 8, successful: true, message: "The naturals numbers were correctly generated."};
+	} else {
+		var iExp = i + 2;
+		var description = " Error occured at index: " + i + " ~ Expected: " + iExp + " ~ Found: " + naturalsArray[ i ].number ;
+		return { number: 8, successful: false, message: "An incorrect amount of natural numbers were generated." + description };
+	}
 
 }
 
