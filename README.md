@@ -18,10 +18,12 @@
 
 # Expansion
   * *Javascript*
+
 This project was developped using only pure Javascript, and only the Bootstrap library for the visual aspect. Of course, this is not a viable solution in a company (even though it is enough for a single-page application).
 To increase the quality of the work, it would be advised to add a library to this project. Node.js looks like an interesting choice, but since I have never used it before, I preferred taking my time to learn how to best use it to its full potential. If I had started a bit earlier, I would have switched to it, and it is not too late to do so in the future.
   
   * *Elixir*
+
 I started this project by looking into Elixir. Since I have never used this language before, I thought it would be a great opportunity to learn. Sadly, the specificities of functional programming hindered me a lot in the testing process, and I realised I would spend too much time on the testing part, and not enough on the application. Hence I switched to Javascript.
 To further expand this project, one could try to  develop the same Elixir application in a test-driven way. (I will do it anyway, just for my personal knowledge.)
   
