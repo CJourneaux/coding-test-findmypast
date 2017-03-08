@@ -1,18 +1,23 @@
-// a avriable retaining if we are in testing or production mode
+/* ========================================
+ *	Global variables
+ * ========================================
+ */
+// a variable retaining if we are in testing or production mode
 var testingModeActivated = false;
 // an array stocking the prime numbers found
 var globalPrimes = [];
 // nb of columns of the multiplication table displayed per page
 var nbColumnsDisplayed = 50;
 
+/* ========================================
+ *	Functions start
+ * ========================================
+ */
 function start () {
 	// verify input
 	if ( verifyN() ) {
 		// get input
 		var n = getN();
-
-		// updating the progressbar
-		displayProgressBar( true, n.value );
 
 		// the set of prime numbers that are looking for
 		var primes = [];
@@ -51,6 +56,7 @@ function start () {
  *	Functions related to the display of the current mode
  * ========================================
  */
+/* changes application mode to testing */
 function changeToTesting () {
 	if ( !testingModeActivated ) {
 		// changing the application mode
@@ -69,6 +75,7 @@ function changeToTesting () {
 	}
 }
 
+/* changes application mode to production */
 function changeToComputing () {
 	if ( testingModeActivated ) {
 		// changing the application mode
@@ -80,33 +87,6 @@ function changeToComputing () {
 		buttonTest.className = buttonTest.className.replace( /(?:^|\s)btn-warning(?!\S)/g , ' btn-default' );
 	}
 }
-
-/* ========================================
- *	Functions related to the progressbar
- * ========================================
- */
-/* shows or hide the progress bar */
-function displayProgressBar ( appear, max ) {
-	var progressBarZone = document.getElementById( 'progress-bar-zone' );
-	if ( appear ) { // start => show and intialise the display of the progressbar
-		progressBarZone.classList.remove( 'hidden' );
-	} else {
-		progressBarZone.classList.add( 'hidden' );
-	}
-	var progressBar = document.getElementById( 'progress-bar' );
-	progressBar.setAttribute( 'aria-valuemax', max );
-}
-
-function updateProgressBar ( progress, max ) {
-	var progressBar = document.getElementById( 'progress-bar' );
-	progressBar.setAttribute( 'aria-valuenow', progress );
-	var percent = Math.round( progress / max * 100 );
-	alert( percent + "%");
-	progress.style = "width: " + percent + "%";
-	var progressBarHelp = document.getElementById( 'progress-bar-help' );
-	progressBarHelp.innerHTML = "" + progress + " prime numbers found";
-}
-
 
 /* ========================================
  *	Functions related to the input
@@ -187,7 +167,6 @@ function eratosthenesSieve ( primesArray, naturalsArray, indexStart, nbPrimes ) 
 			naturalsArray = updatingArrays.naturals;
 			// recording the new prime number found
 			primesArray.push( { number: primeNumber, multiple: lastMultipleFound } );
-			//updateProgressBar( primesArray.length, nbPrimes );
 			// exiting the loop if enough primes have been found
 			if ( primesArray.length == nbPrimes ) {
 				notEnoughPrimes = false;
@@ -245,10 +224,9 @@ function subsetPrimes( primes ) {
 
 }
 
-/* hides the progress bar, fills and displays the multiplication table */
+/* fills and displays the multiplication table */
 function displayTable ( primes, pageIndex ) {
 
-	displayProgressBar( false, 100 );
 	cleanPreviousTable();
 
 	// set of primes to display
@@ -268,7 +246,7 @@ function displayTable ( primes, pageIndex ) {
 
 		for ( var i = 0; i < primes.length; i++ ) { // vertical index (all primes)
 
-			if ( i < nbColumnsDisplayed ) {
+			if ( i < displayedPrimes.length ) {
 				// creating the header column cell
 				var columnHead = document.createElement( 'th' );
 				var headContent = document.createTextNode( displayedPrimes[ i ] );
@@ -300,6 +278,7 @@ function displayTable ( primes, pageIndex ) {
 			tableContent.appendChild( row );
 		}
 	}
+
 	// the total number of pages
 	return nbPages;
 }
@@ -352,27 +331,6 @@ function initPagination ( nbPages ) {
 		paginationList.removeChild( paginationList.childNodes[ 0 ] );
 	}
 
-	// adding "previous" element
-	var liPrevious 			= document.createElement( 'li' );
-	var aPrevious 				= document.createElement( 'a' );
-	var spanTextPrevious 			= document.createElement( 'span' );
-	var spanHelpPrevious 			= document.createElement( 'span' );
-	var spanHelpContentPrevious 		= document.createTextNode( "Previous" );
-	liPrevious.id = "page-btn-previous";
-	liPrevious.className = "page-item";
-	aPrevious.className = "page-link";
-	aPrevious.href = "#";
-	aPrevious.setAttribute( 'onClick', 'goPreviousPage(); return false;' );
-	aPrevious.setAttribute( 'aria-label', 'Next' );
-	spanTextPrevious.setAttribute( 'aria-hidden', true );
-	spanTextPrevious.innerHTML = "&laquo;";
-	spanHelpPrevious.className = 'sr-only';
-	aPrevious.appendChild( spanTextPrevious );
-	spanHelpPrevious.appendChild( spanHelpContentPrevious );
-	aPrevious.appendChild( spanHelpPrevious );
-	liPrevious.appendChild( aPrevious );
-	paginationList.appendChild( liPrevious );
-
 	// adding one link for each page
 	for ( var i = 0; i < nbPages; i++ ) {
 
@@ -396,27 +354,6 @@ function initPagination ( nbPages ) {
 		paginationList.appendChild( liPage );
 	}
 
-	// adding "next" element
-	var liNext 			= document.createElement( 'li' );
-	var aNext 				= document.createElement( 'a' );
-	var spanTextNext 			= document.createElement( 'span' );
-	var spanHelpNext 			= document.createElement( 'span' );
-	var spanHelpContentNext 		= document.createTextNode( "Next" );
-	liNext.id = "page-btn-next";
-	liNext.className = "page-item";
-	aNext.className = "page-link";
-	aNext.href = "#"; //TODO
-	aNext.setAttribute( 'aria-label', 'Next' );
-	aNext.setAttribute( 'onClick', 'goNextPage(); return false;' )
-	spanTextNext.setAttribute( 'aria-hidden', true );
-	spanTextNext.innerHTML = "&raquo;";
-	spanHelpNext.className = 'sr-only';
-	aNext.appendChild( spanTextNext );
-	spanHelpNext.appendChild( spanHelpContentNext );
-	aNext.appendChild( spanHelpNext );
-	liNext.appendChild( aNext );
-	paginationList.appendChild( liNext );
-
 	// setting the current page to 0
 	changePage( 0, nbPages );
 
@@ -433,29 +370,6 @@ function changePage( newPage, totalPages ) {
 	var currentPage = document.getElementById( "page-btn-" + newPage );
 	currentPage.classList.add( "active" );
 
-	// check if end arrows need to be disabled or not
-	var previousPage = document.getElementById( "page-btn-previous");
-	var nextPage = document.getElementById( "page-btn-next" );
-	if ( newPage == 0 ) {
-		previousPage.classList.add( "disabled" );
-	} else {
-		previousPage.classList.remove( "disabled" );
-	}
-	if ( newPage == totalPages - 1 ) {
-		nextPage.classList.add( "disabled" );
-	} else {
-		nextPage.classList.remove( "disabled" );
-	}
-
 	// change content of table
 	displayTable( globalPrimes, newPage );
-}
-
-
-function goPreviousPage() {
-
-}
-
-function goNextPage () {
-
 }

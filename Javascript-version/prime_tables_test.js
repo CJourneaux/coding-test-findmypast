@@ -2,6 +2,7 @@
  *	Starting tests
  * ========================================
  */
+/* launches tests and shows results or not */
 function startTests () {
 	// verify input and start computation
 	if ( testingModeActivated ) {
@@ -15,8 +16,8 @@ function startTests () {
 	}
 }
 
+/* launches all tests */
 function globalTest () {
-
 
 	results = [];
 
@@ -39,6 +40,7 @@ function globalTest () {
 	displayResults( results );
 }
 
+/* displays results in a fancy way */
 function displayResults( results ) {
 
 	var testDisplaySpace = document.getElementById( 'test-results-details' );
@@ -87,6 +89,9 @@ function displayResults( results ) {
 		}
 	}
 	document.getElementById( 'global-result' ).innerHTML = nbTests + " tests executed ~ " + nbFails + " failures";
+
+	// reset the aspect of the table according to the request made by the application
+	displayTable( globalPrimes, 0 );
 }
 
 /* application correctly displaying which mode it is in */
@@ -214,7 +219,7 @@ function test8 () {
 
 /* when inserting more elements into the natural arrays, there are still t elements */
 function test9 () {
-	/* for the test: t = 42 and z = 42 */
+	/* for the test: t = 42 and z = 100 */
 	var t = 42;
 	var z = 100;
 	var total = t + z;
@@ -312,18 +317,38 @@ function test12 () {
 
 /* there are 100 cells shown horizonally in our multiplication table */
 function test13 () {
-	var max = 99;
-	if ( getN().value < 99 ) {
-		max = getN().value - 1;
+
+	// generating an array of primes
+	var t = 242;
+	var z = 1600; // first 242 prime numbers exist within first 1600 natural numbers
+	var naturalsArray = [];
+	naturalsArray = initNaturals( naturalsArray, z );
+	var primesArray = [];
+	primesArray = eratosthenesSieve( primesArray, naturalsArray, 0, t ).primes;
+
+	displayTable( primesArray, 0 );
+
+	var testPassed = true;
+	var headRow = document.getElementById( 'head-row' );
+
+	// test on a first numbers
+	var max = nbColumnsDisplayed + 1;
+	if ( ! ( headRow.hasChildNodes && headRow.childNodes.length == nbColumnsDisplayed + 1 ) ) {
+		testPassed = false;
+	} else {
+		// test on a last page
+		displayTable( primesArray, 4 );
+		if ( ! ( headRow.hasChildNodes && headRow.childNodes.length == t % nbColumnsDisplayed + 1 ) ) {
+			testPassed = false;
+		}
 	}
-	var testReach = document.getElementById( 'cell-0-' + max );
-	max++;
-	var testOverpass = document.getElementById( 'cell-0-' + max );
-	if ( testReach && ( ! testOverpass ) ) {
+
+	if ( testPassed ) {
 		return { number: 13, successful: true, message: "The multiplication table contains at least 100 cells."};
 	} else {
 		return { number: 13, successful: false, message: "The multiplication table does not contain a correct number of cells."};
 	}
+
 }
 
 /* the table of separated prime numbers is structurally correct */
@@ -379,8 +404,8 @@ function test15 () {
 	var currentPage = 0;
 	while ( testPassed && linearIndex < primesArray.length ) {
 		var nextPrime = primesArray[ linearIndex ].number;
-		var rest = linearIndex % 100;
-		var quotient = ( linearIndex - rest ) / 100;
+		var rest = linearIndex % nbColumnsDisplayed;
+		var quotient = ( linearIndex - rest ) / nbColumnsDisplayed;
 		var nextSubsetted = subsetArray[ quotient ][ rest ];
 		if ( nextPrime == nextSubsetted ) {
 			linearIndex++;
@@ -392,7 +417,8 @@ function test15 () {
 	if ( testPassed ) {
 		return { number: 15, successful: true, message: "The numbers in the subset array have been correctly moved." };
 	} else {
-		var rest = linearIndex % 100;
+		var rest = linearIndex % nbColumnsDisplayed;
+		alert( rest );
 		var resultFound = subsetArray[ ( linearIndex - rest ) / 100 ][ rest ];
 		var description = "Error occured at index: " + linearIndex + " ~ Expected: " + primesArray[ linearIndex ].number + " ~ Found: " + resultFound;
 		return { number: 15, successful: false, message: "The numbers in the subset array have not been correctly moved. " + description };
