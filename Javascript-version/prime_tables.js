@@ -1,9 +1,9 @@
 // a avriable retaining if we are in testing or production mode
 var testingModeActivated = false;
-// the set of prime numbers that are looking for
-var primes = [];
-// the set of natural numbers
-var naturals = [];
+// an array stocking the prime numbers found
+var globalPrimes = [];
+// nb of columns of the multiplication table displayed per page
+var nbColumnsDisplayed = 50;
 
 function start () {
 	// verify input
@@ -14,6 +14,11 @@ function start () {
 		// updating the progressbar
 		displayProgressBar( true, n.value );
 
+		// the set of prime numbers that are looking for
+		var primes = [];
+		// the set of natural numbers
+		var naturals = [];
+
 		//start computation
 		var stepLength = 0;
 		var nbIteration = 1;
@@ -22,17 +27,23 @@ function start () {
 			// start index for the current step /!\ less than the actual number
 			var indexStart = stepLength;
 			// increasing the set of natural numbers by x for this step
-			var stepLength = 100 * nbIteration;
+			var stepLength = 1000 * nbIteration;
 			naturals = initNaturals( naturals, stepLength );
 			// removing previous multiples if necessary
-			eratosthenesSievePastPrimeFound();
+			eratosthenesSievePastPrimeFound( primes, naturals );
 			// selecting primes through the natural numbers
-			keepSieving = eratosthenesSieve( indexStart, n.value );
+			var resultComputation = eratosthenesSieve( primes, naturals, indexStart, n.value );
+			keepSieving = resultComputation.continue;
+			primes = resultComputation.primes;
 			// preparing for the next step if necessary
 			nbIteration++;
 		}
 
-		displayTable();
+		globalPrimes = primes;
+
+		// we start by displaying the first page
+		var nbPages = displayTable( primes, 0 );
+		initPagination( nbPages );
 	}
 }
 
@@ -80,7 +91,7 @@ function displayProgressBar ( appear, max ) {
 	if ( appear ) { // start => show and intialise the display of the progressbar
 		progressBarZone.classList.remove( 'hidden' );
 	} else {
-		progressBarZone.classList.remove( 'hidden' );
+		progressBarZone.classList.add( 'hidden' );
 	}
 	var progressBar = document.getElementById( 'progress-bar' );
 	progressBar.setAttribute( 'aria-valuemax', max );
@@ -90,7 +101,8 @@ function updateProgressBar ( progress, max ) {
 	var progressBar = document.getElementById( 'progress-bar' );
 	progressBar.setAttribute( 'aria-valuenow', progress );
 	var percent = Math.round( progress / max * 100 );
-	progress.style = "width: " + percent + "%"
+	alert( percent + "%");
+	progress.style = "width: " + percent + "%";
 	var progressBarHelp = document.getElementById( 'progress-bar-help' );
 	progressBarHelp.innerHTML = "" + progress + " prime numbers found";
 }
@@ -145,122 +157,164 @@ function verifyN () {
 /* fills a table with natural numbers greater than 1 associated with a boolean value */
 function initNaturals ( naturalsArray, lengthValue ) {
 	// starting to fill with 1 or the next value needed to complete the array
-	var startIndex = 0;
-	var endIndexPlus = lengthValue;
+	var startNumber = 2;
 	// pushing the indexes further if table is already filled
-	if ( naturalsArray.length ) {
+	if ( naturalsArray.length > 0 ) {
 		// getting the last number of the array
-		// -2 because numbers are greater than indexes
 		// +1 because we want to add a new entry into the array
-		startIndex = naturalsArray[ naturals.length - 1 ].number - 1;
+		startNumber = naturalsArray[ naturalsArray.length - 1 ].number + 1;
 	}
-	for ( i = startIndex + 2; i < endIndexPlus; i++ ) {
+	// shifting the final index according to the starting number
+	var endIndexPlus = lengthValue + startNumber;
+	for ( var i = startNumber; i < endIndexPlus; i++ ) {
 		// adding a new number at the end of the table
 		naturalsArray.push( { number: i, isPrime: true } );
 	}
 	return naturalsArray;
 }
 
-/* goes throught the array of naturals, and removes all multiples of found primes */
-function eratosthenesSieve ( indexStart, nbPrimes ) {
+/* goes throught the array of naturals, and removes all multiples of found primes while storing prime numbers */
+function eratosthenesSieve ( primesArray, naturalsArray, indexStart, nbPrimes ) {
 	var notEnoughPrimes = true;
 	// looping through the set of natural integers
-	for ( var i = indexStart; i < naturals.length; i++ ) {
-		if ( naturals[ i ].isPrime == true ) {
-			var primeNumber = naturals[ i ].number;
+	for ( var i = indexStart; i < naturalsArray.length; i++ ) {
+		if ( naturalsArray[ i ].isPrime == true ) {
+			var primeNumber = naturalsArray[ i ].number;
 			var nextMultiple = primeNumber;
 			// removing the multiples of this prime number and recording the last one found
-			var lastMultipleFound = eratosthenesCanceller( naturals, primeNumber, nextMultiple );
+			var updatingArrays = eratosthenesCanceller( naturalsArray, primeNumber, nextMultiple );
+			var lastMultipleFound = updatingArrays.lastMultiple;
+			naturalsArray = updatingArrays.naturals;
 			// recording the new prime number found
-			primes.push( { number: primeNumber, multiple: lastMultipleFound } );
-			updateProgressBar( primes.length, nbPrimes );
+			primesArray.push( { number: primeNumber, multiple: lastMultipleFound } );
+			//updateProgressBar( primesArray.length, nbPrimes );
 			// exiting the loop if enough primes have been found
-			if ( primes.length == nbPrimes ) {
+			if ( primesArray.length == nbPrimes ) {
 				notEnoughPrimes = false;
-				i = naturals.length;
+				i = naturalsArray.length;
 			}
 		}
 	}
-	return notEnoughPrimes;
+	return { continue: notEnoughPrimes, primes: primesArray, naturals: naturalsArray };
 }
 
 /* turns all multiples of a prime to false */
 function eratosthenesCanceller ( naturalsArray, primeNumber, nbStart ) {
-	alert( "testing for prime " + primeNumber + " starting: " + nbStart );
 	var nextMultiple = nbStart + primeNumber;
-	alert( "cancelling for: " + primeNumber + " start at " + nextMultiple + " - 2" );
 	var nextIndex = nextMultiple - 2; // should never be less than 0
 	while ( nextIndex < naturalsArray.length && nextIndex > 0 ) {
-		alert( "removing " + naturalsArray[ nextIndex ].number + " at index " + nextIndex );
 		naturalsArray[ nextIndex ].isPrime = false;
 		nextIndex += primeNumber;
 	}
-	return  nextIndex + 2;
+	return { lastMultiple: nextIndex + 2, naturals: naturalsArray };
 }
 
 /* reapplies eratosthenesCanceller() to the new set of generated natural numbers */
-function eratosthenesSievePastPrimeFound () {
-	for ( var i = 0; i < primes.length; i++ ) {
-		eratosthenesCanceller( naturals, primes[ i ].number, primes[ i ].multiple );
+function eratosthenesSievePastPrimeFound ( primesArray, naturalsArray ) {
+	for ( var i = 0; i < primesArray.length; i++ ) {
+		eratosthenesCanceller( naturalsArray, primesArray[ i ].number, primesArray[ i ].multiple );
 	}
+	return naturalsArray;
 }
 
 /* ========================================
  *	Functions related to the display of the final result
  * ========================================
  */
-function displayTable () {
+/* reorganise the arrays of primes, so that there are subsets */
+function subsetPrimes( primes ) {
+	// the array of array of prime numbers
+	var primesSubset = [];
+	// a subset array to fill with 100 elements only
+	var subsetArray = [];
+
+	var index = 0;
+	for ( var i = 0; i < primes.length; i++ ) {
+		// putting the current element into a subset array
+		subsetArray.push( primes[ i ].number );
+		// lookin at the next element
+		var iPlus = i + 1;
+		if ( iPlus % nbColumnsDisplayed == 0 || iPlus == primes.length ) {
+			// the subset array is complete and the loop can restart filling it
+			primesSubset.push( subsetArray );
+			subsetArray = [];
+		}
+	}
+
+	return primesSubset;
+
+}
+
+/* hides the progress bar, fills and displays the multiplication table */
+function displayTable ( primes, pageIndex ) {
 
 	displayProgressBar( false, 100 );
-	cleanPreviousTable ();
+	cleanPreviousTable();
 
-	// first row of the table
-	var firstRow = document.getElementById( 'head-row' );
-	// content of the table
-	var tableContent = document.getElementById( 'table-body' );
+	// set of primes to display
+	var displayedPrimes = subsetPrimes( primes );
+	var nbPages = displayedPrimes.length;
 
-	for ( var i = 0; i < primes.length; i++ ) { // vertical index
+	if ( pageIndex < nbPages ) {
+		// selecting only the part we are interested in
+		displayedPrimes = displayedPrimes[ pageIndex ];
 
-		// creating the header column cell
-		var columnHead = document.createElement( 'th' );
-		var headContent = document.createTextNode( primes[ i ].number );
-		// inserting the header row cell
-		columnHead.appendChild( headContent );
-		firstRow.appendChild( columnHead );
+		document.getElementById( 'prime-tables' ).classList.remove( 'hidden' );
 
-		// new row to insert
-		var row = document.createElement( 'tr' );
+		// first row of the table
+		var firstRow = document.getElementById( 'head-row' );
+		// content of the table
+		var tableContent = document.getElementById( 'table-body' );
 
-		// creating the header row cell
-		var rowHead = document.createElement( 'th' );
-		rowHead.className = "active";
-		rowHead.scope = "row";
-		var rowHeadContent = document.createTextNode( primes[ i ].number );
-		// inserting the header row cell
-		rowHead.appendChild( rowHeadContent ); // /!\ same content for both row and column
-		row.appendChild( rowHead );
+		for ( var i = 0; i < primes.length; i++ ) { // vertical index (all primes)
 
-		// inserting the rest of the cells
-		for ( var j = 0; j < primes.length; j++ ) { // horizontal index
-			row.appendChild( createCell( i, j ) );
+			if ( i < nbColumnsDisplayed ) {
+				// creating the header column cell
+				var columnHead = document.createElement( 'th' );
+				var headContent = document.createTextNode( displayedPrimes[ i ] );
+				// inserting the header row cell
+				columnHead.appendChild( headContent );
+				firstRow.appendChild( columnHead );
+			}
+
+			// new row to insert
+			var row = document.createElement( 'tr' );
+
+			// creating the header row cell
+			var rowHead = document.createElement( 'th' );
+			rowHead.className = "active";
+			rowHead.scope = "row";
+			var rowHeadContent = document.createTextNode( primes[ i ].number );
+			// inserting the header row cell
+			rowHead.appendChild( rowHeadContent ); // /!\ same content for both row and column
+			row.appendChild( rowHead );
+
+			// inserting the rest of the cells
+			for ( var j = 0; j < displayedPrimes.length; j++ ) { // horizontal index (only displayed primes)
+				var factorLeft = primes[ i ].number;
+				var factorTop = displayedPrimes[ j ];
+				row.appendChild( createCell( i, j, factorLeft, factorTop ) );
+			}
+
+			// insering the new row into the table
+			tableContent.appendChild( row );
 		}
-
-		// insering the new row into the table
-		tableContent.appendChild( row );
 	}
+	// the total number of pages
+	return nbPages;
 }
 
 /* creating a new cell to insert in the table */
-function createCell ( verticalIndex, horizontalIndex ) {
+function createCell ( verticalIndex, horizontalIndex, factorLeft, factorTop ) {
 	var cell = document.createElement( 'td' );
 	// giving an id to be able to identify each cell
 	cell.id = "cell-" + verticalIndex + "-" + horizontalIndex;
 	// highlighting the diagonal
-	if ( verticalIndex == horizontalIndex ) {
+	if ( factorLeft == factorTop ) {
 		cell.className = "info";
 	}
 	// content of the cell
-	var product = primes[ verticalIndex ].number * primes[ horizontalIndex ].number;
+	var product = factorLeft * factorTop;
 	var cellContent = document.createTextNode( product );
 	cell.appendChild( cellContent );
 
@@ -273,7 +327,7 @@ function cleanPreviousTable () {
 	// restoring the header row
 	var headerRow = document.getElementById( 'head-row' );
 	while ( headerRow.hasChildNodes() ) {
-		headerRow.removeChild( headerRow.childNodes[ 0] );
+		headerRow.removeChild( headerRow.childNodes[ 0 ] );
 	}
 	var firstCell = document.createElement( 'th' );
 	headerRow.appendChild( firstCell );
@@ -281,6 +335,127 @@ function cleanPreviousTable () {
 	// restoring the following rows
 	var tableContent = document.getElementById( 'table-body' );
 	while ( tableContent.hasChildNodes() ) {
-		tableContent.removeChild( tableContent.childNodes[ 0] );
+		tableContent.removeChild( tableContent.childNodes[ 0 ] );
 	}
+}
+
+/* ========================================
+ *	Functions related to the display of the pagination
+ * ========================================
+ */
+/* resets and shows the pagination */
+function initPagination ( nbPages ) {
+	var paginationList = document.getElementById( 'page-numbers' );
+
+	// clearing previous elements
+	while ( paginationList.hasChildNodes() ) {
+		paginationList.removeChild( paginationList.childNodes[ 0 ] );
+	}
+
+	// adding "previous" element
+	var liPrevious 			= document.createElement( 'li' );
+	var aPrevious 				= document.createElement( 'a' );
+	var spanTextPrevious 			= document.createElement( 'span' );
+	var spanHelpPrevious 			= document.createElement( 'span' );
+	var spanHelpContentPrevious 		= document.createTextNode( "Previous" );
+	liPrevious.id = "page-btn-previous";
+	liPrevious.className = "page-item";
+	aPrevious.className = "page-link";
+	aPrevious.href = "#";
+	aPrevious.setAttribute( 'onClick', 'goPreviousPage(); return false;' );
+	aPrevious.setAttribute( 'aria-label', 'Next' );
+	spanTextPrevious.setAttribute( 'aria-hidden', true );
+	spanTextPrevious.innerHTML = "&laquo;";
+	spanHelpPrevious.className = 'sr-only';
+	aPrevious.appendChild( spanTextPrevious );
+	spanHelpPrevious.appendChild( spanHelpContentPrevious );
+	aPrevious.appendChild( spanHelpPrevious );
+	liPrevious.appendChild( aPrevious );
+	paginationList.appendChild( liPrevious );
+
+	// adding one link for each page
+	for ( var i = 0; i < nbPages; i++ ) {
+
+		var iPlus = i + 1; // index start at 0, but we display 1 to the user
+
+		// creation of elements
+		var liPage 		= document.createElement( 'li' );
+		var aPage 			= document.createElement( 'a' );
+		var aContent 			= document.createTextNode( iPlus );
+		// setting up attributes
+		liPage.className = "page-item";
+		liPage.id = "page-btn-" + i;
+		aPage.className = "page-link";
+		aPage.href = "#";
+		// preparing the function to call
+		var parameteredFunction = "changePage(" + i + ", " + nbPages + "); return false;"
+		aPage.setAttribute( 'onClick', parameteredFunction );
+		// inserting into page
+		aPage.appendChild( aContent );
+		liPage.appendChild( aPage );
+		paginationList.appendChild( liPage );
+	}
+
+	// adding "next" element
+	var liNext 			= document.createElement( 'li' );
+	var aNext 				= document.createElement( 'a' );
+	var spanTextNext 			= document.createElement( 'span' );
+	var spanHelpNext 			= document.createElement( 'span' );
+	var spanHelpContentNext 		= document.createTextNode( "Next" );
+	liNext.id = "page-btn-next";
+	liNext.className = "page-item";
+	aNext.className = "page-link";
+	aNext.href = "#"; //TODO
+	aNext.setAttribute( 'aria-label', 'Next' );
+	aNext.setAttribute( 'onClick', 'goNextPage(); return false;' )
+	spanTextNext.setAttribute( 'aria-hidden', true );
+	spanTextNext.innerHTML = "&raquo;";
+	spanHelpNext.className = 'sr-only';
+	aNext.appendChild( spanTextNext );
+	spanHelpNext.appendChild( spanHelpContentNext );
+	aNext.appendChild( spanHelpNext );
+	liNext.appendChild( aNext );
+	paginationList.appendChild( liNext );
+
+	// setting the current page to 0
+	changePage( 0, nbPages );
+
+}
+
+function changePage( newPage, totalPages ) {
+	// remove the "active" tag
+	for ( var i = 0; i < totalPages; i++ ) {
+		var page = document.getElementById( "page-btn-" + i );
+		page.classList.remove( "active" );
+	}
+
+	// add the "active" tag to current page
+	var currentPage = document.getElementById( "page-btn-" + newPage );
+	currentPage.classList.add( "active" );
+
+	// check if end arrows need to be disabled or not
+	var previousPage = document.getElementById( "page-btn-previous");
+	var nextPage = document.getElementById( "page-btn-next" );
+	if ( newPage == 0 ) {
+		previousPage.classList.add( "disabled" );
+	} else {
+		previousPage.classList.remove( "disabled" );
+	}
+	if ( newPage == totalPages - 1 ) {
+		nextPage.classList.add( "disabled" );
+	} else {
+		nextPage.classList.remove( "disabled" );
+	}
+
+	// change content of table
+	displayTable( globalPrimes, newPage );
+}
+
+
+function goPreviousPage() {
+
+}
+
+function goNextPage () {
+
 }
