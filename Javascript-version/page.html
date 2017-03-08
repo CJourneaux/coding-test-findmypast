@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Multiplication tables of prime numbers</title>
+
+		<!-- Latest compiled and minified Bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Personalised CSS -->
+		<link rel="stylesheet" href="style.css" />
+
+		<!-- Scripts are loaded at the end of the page -->
+
+	</head>
+
+	<body>
+
+		<!-- Navigation bar -->
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Cécile Journeaux</a>
+				</div>
+				<div class="navbar-right navbar-btn btn-group" data-toggle="buttons">
+					<label id="toggle-work" class="btn btn-info" onclick="changeToComputing();return false;">Working</label>
+					<label id="toggle-test" class="btn btn-default" onclick="changeToTesting();return false;">Testing</label>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Page header -->
+		<div class="jumbotron">
+			<div class="container">
+				<!-- Title and introduction -->
+				<h1>Prime number multiplication tables</h1>
+				<p class="welcome-message">This webpage will allow you to compute and display the multiplication tables of the first n prime numbers, n being a number of your choice.</p>
+				<!-- Input form -->
+				<form class="form-inline">
+					<div class="form-group form-group-lg">
+						<input id="input-n" type="text" placeholder="Choose a number" class="form-control form-control-lg">
+					</div>
+					<button type="button" class="btn btn-lg btn-success" onClick="start();startTests();">Start computing &raquo;</button>
+				</form>
+				<!-- Warning message -->
+				<p>
+					<div id="error-input-msg" class="alert alert-danger hidden" role="alert">
+						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+						<span class="sr-only">Error:</span>
+						This is not a valid positive integer. Please try again!
+					</div>
+				</p>
+			</div>
+		</div>
+
+		<!-- Page content -->
+		<div class="container">
+
+			<!-- Test results -->
+			<div id="test-results" class="hidden">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Tests results</h3>
+					</div>
+					<div id="global-result" class="panel-body">
+					</div>
+				</div>
+
+				<div id="test-results-details"></div>
+
+			</div>
+
+			<!-- Navigation for the multiplication table -->
+			<nav  aria-label="Table navigation">
+				<ul id="page-numbers" class="pagination justify-content-center">
+				</ul>
+			</nav>
+
+		</div> <!-- container -->
+
+		<!-- Multiplication tables -->
+		<table id="prime-tables" class="table table-bordered hidden">
+			<thead>
+				<tr id="head-row" class="active">
+					<th></th>
+				</tr>
+			</thead>
+			<tbody id="table-body">
+			</tr>
+			</tbody>
+		</table>
+
+		<!-- Application script -->
+		<script src="prime_tables.js"></script>
+		<!-- Testing script -->
+		<script src="prime_tables_test.js"></script>
+
+	</body>
+</html>
