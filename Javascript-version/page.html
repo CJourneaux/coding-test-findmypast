@@ -60,9 +60,9 @@
 		<div class="container">
 
 			<!-- Progress bar -->
-			<div id="progress-bar" class="progress hidden">
-				<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45" style="width: 75%">
-					<span class="sr-only">45% Complete</span>
+			<div id="progress-bar-zone" class="progress hidden">
+				<div id="progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%">
+					<span id="progress-bar-help" class="sr-only">0% done</span>
 				</div>
 			</div>
 
@@ -83,119 +83,11 @@
 			<!-- Multiplication tables -->
 			<table id="prime-tables" class="table table-bordered">
 				<thead>
-					<tr class="active">
-						<th></th>
-						<th>2</th>
-						<th>3</th>
-						<th>5</th>
-						<th>7</th>
-						<th>11</th>
-						<th>13</th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
-						<th></th>
+					<tr id="head-row" class="active">
 						<th></th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr>
-						<th class="active" scope="row">2</th>
-						<td class="info"></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<th class="active" scope="row">3</th>
-						<td></td>
-						<td class="info"></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr>
-						<th class="active" scope="row">5</th>
-						<td></td>
-						<td></td>
-						<td class="info"></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
+				<tbody id="table-body">
 				</tr>
 				</tbody>
 			</table>
